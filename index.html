@@ -2316,6 +2316,7 @@ async function submitRequest(){
   try {
     await fetch(APPS_SCRIPT_URL,{
       method:'POST',
+      mode:'no-cors',
       body:JSON.stringify({bookNo:selectedBook.bookNo,bookName:selectedBook.bookName}),
       headers:{'Content-Type':'application/json'}
     });
