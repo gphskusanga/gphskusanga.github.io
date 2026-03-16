@@ -1176,6 +1176,14 @@
         <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--navy);margin-bottom:6px;">📖 Request Book</h3>
         <p id="requestBookName" style="font-size:.88rem;color:var(--muted);margin-bottom:20px;"></p>
         <div style="margin-bottom:20px;">
+<div style="margin-bottom:14px;">
+  <label style="display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px;">Your Name</label>
+  <input type="text" id="libStudentName" placeholder="Enter your full name" autocomplete="off" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:.92rem;font-family:'DM Sans',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'"/>
+</div>
+<div style="margin-bottom:14px;">
+  <label style="display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px;">Roll Number</label>
+  <input type="text" id="libRollNo" placeholder="Enter your roll number" autocomplete="off" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:.92rem;font-family:'DM Sans',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'"/>
+</div>
           <label style="display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px;">Library Password</label>
           <div style="position:relative;">
             <input type="password" id="reqPassword" placeholder="Enter library password" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="width:100%;padding:11px 44px 11px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:.92rem;font-family:'DM Sans',sans-serif;outline:none;" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'"/>
@@ -2202,7 +2210,7 @@ function closeTeacherPwd(){
 /* ── E-LIBRARY (live from Google Sheets) ── */
 const LIBRARY_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0X9nlnsUKUMKu-XQyHgbuwHIcAWgvL3KyLx8kN_L0V8UFwLpwTqtR9JOISWxzPjMu_gdKa0_-A34_/pub?gid=0&single=true&output=csv';
 // ⚠️ Replace with your Apps Script Web App URL after deployment:
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbybwoeYN4TVy2PTbcBWaRvTMfZ2M2oO-kWm8Ppia8TNuea-RhXtOLK5pnzShi69tshyWQ/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwLWV4Gg6Z3UXbyEdBIenUHUgNUqmxfYc19FoSAph-Qng5z8cQ4WVrI-qcx7-IpHh5RhA/exec';
 
 let allBooks=[], selectedBook=null;
 
@@ -2317,7 +2325,7 @@ async function submitRequest(){
     await fetch(APPS_SCRIPT_URL,{
       method:'POST',
       mode:'no-cors',
-      body:JSON.stringify({bookNo:selectedBook.bookNo,bookName:selectedBook.bookName}),
+      body:JSON.stringify({bookNo:selectedBook.bookNo,bookName:selectedBook.bookName,studentName:document.getElementById('libStudentName').value.trim(),rollNo:document.getElementById('libRollNo').value.trim()}),
       headers:{'Content-Type':'application/json'}
     });
     msgEl.textContent='✅ Request submitted! Please collect "'+selectedBook.bookName+'" from the library.';
@@ -2351,7 +2359,7 @@ async function loadRequests(){
     return;
   }
   try {
-    const res=await fetch(APPS_SCRIPT_URL+'?action=getRequests');
+    const res=await fetch(APPS_SCRIPT_URL+'?action=getRequests&_='+Date.now());
     const data=await res.json();
     if(!data.requests||data.requests.length===0){
       document.getElementById('requestsBody').innerHTML='<tr><td colspan="7" style="padding:20px;text-align:center;color:var(--muted);">No requests yet.</td></tr>';
