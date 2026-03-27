@@ -2231,24 +2231,36 @@ function renderTimetableRaw(rows){
   const COLORS=['#fff8f0','#f0fff4','#f0f4ff','#fdf4ff','#fff1f2','#f0fdff','#fffbeb','#f5f5ff'];
   const hdrs=rows[0]||[];
   const colCount=hdrs.length;
+  // Detect if a row is a repeated P1/P2 header row from the sheet
+  function isHeaderRow(r){
+    const f=(r[0]||'').trim().toLowerCase();
+    const s=(r[1]||'').trim().toLowerCase();
+    return (f==='teacher'||f==='') && (s==='day'||s==='');
+  }
   let html=`<div class="tt-table-wrap"><table class="tt-table"><thead><tr>`;
   hdrs.forEach(h=>html+=`<th style="text-align:center;">${h||''}</th>`);
   html+=`</tr></thead><tbody>`;
   let colorIdx=-1;
   let currentColor='';
-  let currentTeacher='';
   rows.slice(1).forEach(r=>{
     const first=(r[0]||'').trim();
-    const isTeacherHeader=first.toLowerCase()==='teacher';
-    if(isTeacherHeader){
+    const isTeacherDivider=first.toLowerCase()==='teacher' && (r[1]||'').trim().toLowerCase()!=='day';
+    // Repeated sheet header row — render as a styled sub-header
+    if(isHeaderRow(r)){
+      html+=`<tr style="background:var(--navy);">`;
+      r.forEach(h=>html+=`<th style="text-align:center;padding:10px 16px;font-size:.75rem;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.75);">${h||''}</th>`);
+      html+=`</tr>`;
+      return;
+    }
+    // "TEACHER" divider row
+    if(isTeacherDivider){
       html+=`<tr><td colspan="${colCount}" style="background:var(--navy);color:rgba(255,255,255,.65);font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:9px 16px;text-align:left;">TEACHER</td></tr>`;
       return;
     }
-    // New teacher name in first column = new colour block
+    // New teacher name = new colour block
     if(first && first!=='—'){
       colorIdx=(colorIdx+1)%COLORS.length;
       currentColor=COLORS[colorIdx];
-      currentTeacher=first;
     }
     html+=`<tr style="background:${currentColor};">`;
     r.forEach((cell,i)=>{
