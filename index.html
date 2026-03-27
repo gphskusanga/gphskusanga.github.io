@@ -223,10 +223,14 @@
     .tt-tab.active{background:var(--navy);color:var(--white);border-color:var(--navy);}
     .tt-panel{display:none;}.tt-panel.active{display:block;}
     .tt-table-wrap{border-radius:16px;overflow:hidden;box-shadow:0 3px 20px var(--shadow);}
-    .tt-table{width:100%;border-collapse:collapse;background:var(--white);}
+    .tt -table{width:100%;border-collapse:collapse;background:var(--white);}
     .tt-table thead tr{background:var(--navy);}
-    .tt-table th{padding:15px 16px;text-align:left;font-size:.82rem;font-weight:700;letter-spacing:.04em;color:var(--white);}
-    .tt-table td{padding:14px 16px;font-size:.88rem;border-bottom:1px solid var(--border);color:var(--text);}
+    .tt-table th{padding:15px 16px;text-align:center;font-size:.82rem;font-weight:700;letter-spacing:.04em;color:var(--white);}
+    .tt-table th:first-child{text-align:left;}
+    .th-period{display:block;font-size:.82rem;font-weight:700;letter-spacing:.04em;}
+    .th-time{display:block;font-size:.72rem;font-weight:400;opacity:.7;margin-top:3px;letter-spacing:0;}
+    .tt-table td{padding:14px 16px;font-size:.88rem;border-bottom:1px solid var(--border);color:var(--text);text-align:center;}
+    .tt-table td:first-child{text-align:left;font-weight:700;}
     .tt-table tr:last-child td{border-bottom:none;}
     .tt-table tbody tr:nth-child(even) td{background:#f8fafc;}
     .tt-table tbody tr:hover td{background:#eef3fa;}
@@ -234,8 +238,15 @@
     .pill-blue{background:#dbeafe;color:#1e40af;}.pill-green{background:#dcfce7;color:#166534;}
     .pill-orange{background:#fef3c7;color:#92400e;}.pill-red{background:#fee2e2;color:#991b1b;}
     .pill-purple{background:#ede9fe;color:#5b21b6;}
-    .tt-note{margin-top:14px;font-size:.83rem;color:var(--muted);padding:12px 16px;background:var(--white);border-radius:8px;border-left:3px solid var(--saffron);}
-
+    .tt-teacher-0 td{background:#f0f4ff!important;}
+    .tt-teacher-1 td{background:#f0fff4!important;}
+    .tt-teacher-2 td{background:#fff7ed!important;}
+    .tt-teacher-3 td{background:#fdf4ff!important;}
+    .tt-teacher-4 td{background:#fff1f2!important;}
+    .tt-teacher-5 td{background:#f0fdff!important;}
+    .tt-teacher-6 td{background:#fffbeb!important;}
+    .tt-teacher-7 td{background:#f5f0ff!important;}
+    .tt-teacher-group td:first-child{font-weight:800;font-size:.8rem;letter-spacing:.05em;}
     /* STAFF */
     #staff{background:var(--white);}
     .staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;}
@@ -2149,7 +2160,12 @@ function renderTimetable(rows, cls){
     return true;
   });
   let html=`<div class="tt-table-wrap"><table class="tt-table"><thead><tr>`;
-  hdrs.forEach((h)=>{ html+=`<th>${h}</th>`; });
+  hdrs.forEach((h,i)=>{
+    if(i===0){ html+=`<th>${h}</th>`; return; }
+    const m=h.match(/^(\d+(?:st|nd|rd|th)?)\s+(.+)$/i);
+    if(m){ html+=`<th><span class="th-period">${m[1]}</span><span class="th-time">${m[2]}</span></th>`; }
+    else { html+=`<th>${h}</th>`; }
+  });
   html+=`</tr></thead><tbody>`;
   dataRows.forEach(r=>{
     const isSat = (r[0]||'').toUpperCase().trim().startsWith('SAT');
@@ -2166,8 +2182,18 @@ function renderTimetableRaw(rows){
   let html=`<div class="tt-table-wrap"><table class="tt-table"><thead><tr>`;
   (rows[0]||[]).forEach(h=>html+=`<th>${h||''}</th>`);
   html+=`</tr></thead><tbody>`;
+  let colorIdx=-1, lastTeacher='';
   rows.slice(1).forEach(r=>{
-    html+=`<tr>`;
+    const firstCell=(r[0]||'').trim();
+    const isHeader=firstCell.toLowerCase()==='teacher';
+    if(isHeader){
+      html+=`<tr style="background:var(--navy);"><td colspan="${r.length}" style="padding:10px 16px;font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6);">Teacher</td></tr>`;
+      return;
+    }
+    if(firstCell && firstCell!=='—' && firstCell!==lastTeacher){
+      lastTeacher=firstCell; colorIdx=(colorIdx+1)%8;
+    }
+    html+=`<tr class="tt-teacher-${colorIdx}">`;
     r.forEach(cell=>html+=`<td>${cell||'—'}</td>`);
     html+=`</tr>`;
   });
