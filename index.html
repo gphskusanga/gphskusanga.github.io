@@ -1423,51 +1423,42 @@ function noticeAction(link,tag){
   else if(dest==='#admission'){ openAdmissionOverlay(); }
   else { const el=document.querySelector(dest); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); }
 }
-async function generateHolidayNotices(){
+function generateHolidayNotices(){
   try{
-    const res = await fetch(SHEET_NOTICES+'&_='+Date.now());
-    const rows = parseSimpleCSV(await res.text());
-    
     const today = new Date();
-    const holidays = [];
+    today.setHours(0,0,0,0);
+    const upcoming = [];
 
-    rows.forEach(row => {
-      if(!row.Date) return;
-      
-      const holidayDate = new Date(row.Date);
-      const daysUntil = Math.floor((holidayDate - today) / (1000 * 60 * 60 * 24));
-
-      // Show notice if holiday is within 7 days AND hasn't passed
-      if(daysUntil >= 0 && daysUntil <= 7 && row.Type && row.Type.toLowerCase().includes('holiday')){
-        holidays.push({
-          date: row.Date,
-          name: row.Title || 'School Holiday',
-          reason: row.Description || '',
-          daysUntil: daysUntil
-        });
+    (typeof HOLIDAYS_2026 !== 'undefined' ? HOLIDAYS_2026 : []).forEach(h => {
+      if(!h.date) return;
+      const hDate = new Date(h.date);
+      hDate.setHours(0,0,0,0);
+      const daysUntil = Math.floor((hDate - today) / (1000 * 60 * 60 * 24));
+      // Pin if within 7 days ahead (not yet passed) and type is holiday (not vacation/observance)
+      if(daysUntil >= 0 && daysUntil <= 7 && h.type === 'holiday'){
+        upcoming.push({ name: h.name, date: h.date, daysUntil });
       }
     });
 
-    // Sort by days until holiday (closest first)
-    holidays.sort((a, b) => a.daysUntil - b.daysUntil);
+    upcoming.sort((a, b) => a.daysUntil - b.daysUntil);
 
-    // Add generated holidays to notice grid
     const noticeGrid = document.querySelector('.notice-grid');
-    if(!noticeGrid || holidays.length === 0) return;
+    if(!noticeGrid || upcoming.length === 0) return;
 
-    holidays.forEach(holiday => {
-      const noticeCard = document.createElement('div');
-      noticeCard.className = 'notice-card green';
-      noticeCard.innerHTML = `
+    upcoming.forEach(holiday => {
+      const card = document.createElement('div');
+      card.className = 'notice-card green';
+      const fmt = new Date(holiday.date).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+      card.innerHTML = `
         <div class="notice-meta">
-          <span class="notice-date">📅 ${holiday.daysUntil === 0 ? 'TODAY' : holiday.daysUntil + ' DAYS BEFORE'}</span>
+          <span class="notice-date">📅 ${holiday.daysUntil === 0 ? 'TODAY' : holiday.daysUntil + ' DAY' + (holiday.daysUntil > 1 ? 'S' : '') + ' AWAY'}</span>
           <span class="notice-tag holiday">HOLIDAY</span>
         </div>
         <h4>🎉 ${holiday.name}</h4>
-        <p>${holiday.reason || 'School Closure'}</p>
-        <p style="margin-top:10px; font-size:.8rem; color:#0f7a32;"><strong>Date:</strong> ${holiday.date}</p>
+        <p>The school will be closed on ${fmt} on account of ${holiday.name}</p>
+        <p style="margin-top:8px;"><a href="#holidays" style="font-size:.8rem;color:#0f7a32;font-weight:600;">→ View Calendar</a></p>
       `;
-      noticeGrid.insertBefore(noticeCard, noticeGrid.firstChild);
+      noticeGrid.insertBefore(card, noticeGrid.firstChild);
     });
   }catch(err){
     console.error('Holiday notices error:', err);
@@ -2248,7 +2239,14 @@ function renderTimetableRaw(rows){
     // Repeated sheet header row — render as a styled sub-header
     if(isHeaderRow(r)){
       html+=`<tr style="background:var(--navy);">`;
-      r.forEach(h=>html+=`<th style="text-align:center;padding:10px 16px;font-size:.75rem;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.75);">${h||''}</th>`);
+      r.forEach((h,i)=>{
+        const m = h.match(/^(P\d+)\s*(.*)$/i);
+        if(m){
+          html+=`<th style="text-align:center;padding:10px 16px;"><span class="th-period" style="color:#fff;">${m[1]}</span>${m[2]?`<span class="th-time" style="color:rgba(255,255,255,.7);">${m[2]}</span>`:''}</th>`;
+        } else {
+          html+=`<th style="text-align:center;padding:10px 16px;font-size:.75rem;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.75);">${h||''}</th>`;
+        }
+      });
       html+=`</tr>`;
       return;
     }
