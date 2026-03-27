@@ -230,6 +230,7 @@
     .th-period{display:block;font-size:.82rem;font-weight:700;letter-spacing:.04em;}
     .th-time{display:block;font-size:.72rem;font-weight:400;opacity:.7;margin-top:3px;letter-spacing:0;}
     .tt-table td{padding:14px 16px;font-size:.88rem;border-bottom:1px solid var(--border);color:var(--text);text-align:center;}
+    .tt-table td:first-child{text-align:center;font-weight:700;}
     .tt-table td:first-child{text-align:left;font-weight:700;}
     .tt-table tr:last-child td{border-bottom:none;}
     .tt-table tbody tr:nth-child(even) td{background:#f8fafc;}
@@ -1052,7 +1053,7 @@
     </div>
 
     <!-- Class teacher info bar -->
-    <div id="ttClassInfo" style="display:none;background:var(--navy);color:var(--white);border-radius:10px;padding:12px 20px;margin-bottom:18px;font-size:.9rem;display:flex;gap:24px;flex-wrap:wrap;align-items:center;">
+    <div id="ttClassInfo" style="display:none;background:var(--navy);color:var(--white);border-radius:10px;padding:12px 20px;margin-bottom:18px;font-size:.9rem;display:flex;gap:24px;flex-wrap:wrap;align-items:center;justify-content:center;text-align:center;">
       <span id="ttSession"></span>
       <span id="ttClassTeacher"></span>
       <span id="ttClassName" style="margin-left:auto;font-family:'Playfair Display',serif;font-weight:700;color:var(--saffron);"></span>
@@ -2179,22 +2180,33 @@ function renderTimetable(rows, cls){
 
 function renderTimetableRaw(rows){
   if(!rows||rows.length<2){document.getElementById('ttOutput').innerHTML='<p style="padding:20px;color:var(--muted);">No teacher timetable data found.</p>';return;}
+  const COLORS=['#fff8f0','#f0fff4','#f0f4ff','#fdf4ff','#fff1f2','#f0fdff','#fffbeb','#f5f5ff'];
+  const hdrs=rows[0]||[];
+  const colCount=hdrs.length;
   let html=`<div class="tt-table-wrap"><table class="tt-table"><thead><tr>`;
-  (rows[0]||[]).forEach(h=>html+=`<th>${h||''}</th>`);
+  hdrs.forEach(h=>html+=`<th style="text-align:center;">${h||''}</th>`);
   html+=`</tr></thead><tbody>`;
-  let colorIdx=-1, lastTeacher='';
+  let colorIdx=-1;
+  let currentColor='';
+  let currentTeacher='';
   rows.slice(1).forEach(r=>{
-    const firstCell=(r[0]||'').trim();
-    const isHeader=firstCell.toLowerCase()==='teacher';
-    if(isHeader){
-      html+=`<tr style="background:var(--navy);"><td colspan="${r.length}" style="padding:10px 16px;font-weight:700;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6);">Teacher</td></tr>`;
+    const first=(r[0]||'').trim();
+    const isTeacherHeader=first.toLowerCase()==='teacher';
+    if(isTeacherHeader){
+      html+=`<tr><td colspan="${colCount}" style="background:var(--navy);color:rgba(255,255,255,.65);font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:9px 16px;text-align:left;">TEACHER</td></tr>`;
       return;
     }
-    if(firstCell && firstCell!=='—' && firstCell!==lastTeacher){
-      lastTeacher=firstCell; colorIdx=(colorIdx+1)%8;
+    // New teacher name in first column = new colour block
+    if(first && first!=='—'){
+      colorIdx=(colorIdx+1)%COLORS.length;
+      currentColor=COLORS[colorIdx];
+      currentTeacher=first;
     }
-    html+=`<tr class="tt-teacher-${colorIdx}">`;
-    r.forEach(cell=>html+=`<td>${cell||'—'}</td>`);
+    html+=`<tr style="background:${currentColor};">`;
+    r.forEach((cell,i)=>{
+      const bold=(i===0&&cell&&cell!=='—')?'font-weight:700;':'';
+      html+=`<td style="text-align:center;${bold}">${cell||'—'}</td>`;
+    });
     html+=`</tr>`;
   });
   html+=`</tbody></table></div>`;
