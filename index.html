@@ -71,7 +71,7 @@
 
     /* SECTIONS */
     section{padding:80px 24px;}
-    .section-inner{max-width:1140px;margin:0 auto;}
+    .section-inner{max-width:1140px;margin:0 auto;width:100%;box-sizing:border-box;}
     .section-eyebrow{display:flex;width:fit-content;align-items:center;gap:7px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--green);margin:0 auto 10px;}
     .section-eyebrow::before{content:'';width:20px;height:2px;background:var(--green);border-radius:1px;}
     .section-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:800;color:var(--navy);margin-bottom:12px;line-height:1.15;letter-spacing:-.02em;text-align:center;}
@@ -216,7 +216,7 @@
     .badge{font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--light);color:var(--navy-mid);border:1px solid var(--border);}
 
     /* TIMETABLE */
-    #timetable{background:var(--off-white);display:flex;flex-direction:column;align-items:center;width:100%;box-sizing:border-box;overflow:hidden;}
+    #timetable{background:var(--off-white);display:flex;flex-direction:column;align-items:center;width:100%;box-sizing:border-box;overflow-x:hidden;}
     .tt-tabs{display:flex;gap:10px;margin-bottom:28px;flex-wrap:wrap;justify-content:center;}
     .tt-tab{padding:10px 24px;border-radius:9px;border:2px solid var(--border);background:var(--white);color:var(--muted);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
     .tt-tab:hover{border-color:var(--navy);color:var(--navy);}
