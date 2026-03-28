@@ -2675,6 +2675,8 @@ document.addEventListener('keydown', e=>{
 });
 
 document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('resultOverlay').classList.remove('open');
+  document.body.style.overflow='';
   // Restore admin session
   if(sessionStorage.getItem('siteAdminOk')==='1') applySiteAdmin();
   // Load site settings from Google Sheet — sets admission/exam/result state for ALL devices
