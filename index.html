@@ -655,7 +655,7 @@
   <div style="max-width:680px;margin:0 auto;padding:32px 20px 60px;">
     <button onclick="closeAdmissionOverlay()" style="background:rgba(255,255,255,.1);border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:8px 14px;border-radius:8px;margin-bottom:24px;">✕ Close</button>
     <div style="text-align:center;margin-bottom:32px;">
-      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(244,160,18,.15);border:1px solid rgba(244,160,18,.3);color:var(--saffron);font-size:.73rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 16px;border-radius:30px;margin-bottom:16px;" id="admBadgeYear">🎓 Admissions 2025-26</div>
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(244,160,18,.15);border:1px solid rgba(244,160,18,.3);color:var(--saffron);font-size:.73rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 16px;border-radius:30px;margin-bottom:16px;" id="admBadgeYear">🎓 Admissions 2026-27</div>
       <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:900;color:#fff;margin-bottom:8px;">Apply for <em style="color:var(--saffron);font-style:normal;">Class IX</em></h2>
       <p style="color:#94afc8;max-width:480px;margin:0 auto;">Fill the online form or visit the school office. SC/ST/OBC students may apply for scholarships.</p>
     </div>
@@ -1006,7 +1006,7 @@
   <div class="section-inner">
     <div class="section-eyebrow reveal">👨‍🏫 Our Team</div>
     <h2 class="section-title reveal">Staff Directory</h2>
-    <p class="section-sub reveal">Our dedicated team of qualified educators and support staff — Academic Year <span id="staffAcYear">2025-26</span>.</p>
+    <p class="section-sub reveal">Our dedicated team of qualified educators and support staff — Academic Year <span id="staffAcYear">2026-27</span>.</p>
     <!-- Category tabs -->
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;justify-content:center;" class="reveal">
       <button class="tt-tab active" onclick="showStaffCategory('teaching',this)">👨‍🏫 Teaching Staff</button>
@@ -1286,7 +1286,7 @@
 
 
 <footer>
-  <p>© 2025–26 <strong>Govt. G.P. High School, Kusanga</strong></p>
+  <p>© 2026–27 <strong>Govt. G.P. High School, Kusanga</strong></p>
   <div class="footer-divider"></div>
   <p>AT/PO-Kusanga, PS-Harabhanga, Dist-Boudh, Odisha – 762020 &nbsp;|&nbsp; Recognized by Govt. of Odisha &nbsp;|&nbsp; BSE Odisha Affiliated &nbsp;|&nbsp; UDISE: <span id="footerUdise">21220243701</span></p>
   <div class="footer-links">
@@ -2799,7 +2799,7 @@ function applyAllSettings(){
   if(admFormBtn){admFormBtn.href=formUrl;}
 
   /* ── 2. Academic year ── */
-  const ay=sv('academic_year')||'2025-26';
+  const ay=sv('academic_year')||'2026-27';
   ['staffAcYear','footerAcYear'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=ay;});
   const contactAyEl=document.getElementById('contactAcYear');
   if(contactAyEl) contactAyEl.textContent='April '+ay.split('-')[0]+' – March 20'+ay.split('-')[1];
